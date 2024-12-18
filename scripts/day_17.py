@@ -1,4 +1,4 @@
-from math import log2
+from functools import partial
 
 # Helper functions #
 def load_data(fname):
@@ -7,17 +7,17 @@ def load_data(fname):
 
     regs, ops = raw_lines.split('\n\n')
     regs = regs.split('\n')
-    regs = [int(r.split(': ')[1]) for r in regs]
-    ops = [int(x) for x in ops.split(': ')[1].split(',')]
+    regs = [r.split(': ')[1] for r in regs]
+    ops = [x for x in ops.split(': ')[1].split(',')]
 
     return regs, ops
 
 class Computer:
     def __init__(self, regs, ops):
-        self.A = regs[0]
-        self.B = regs[1]
-        self.C = regs[2]
-        self.ops = ops
+        self.A = int(regs[0])
+        self.B = int(regs[1])
+        self.C = int(regs[2])
+        self.ops = [int(o) for o in ops]
         self.pointer = 0
         self.func_dict = {
             0: self.adv,
@@ -73,36 +73,35 @@ class Computer:
     def cdv(self, x):
         self.C = int(self.A/2**self.get_combo(x))
 
-def register_macro(regs, ops, a_reg):
+def run_computer_macro(regs, ops, a_reg=None):
     computer = Computer(regs, ops)
-    computer.A = a_reg
+    if a_reg is not None:
+        computer.A = a_reg
     out = computer.run()
     return out
 
 # Main #
 if __name__ == "__main__":
     regs, ops = load_data('data/day_17.dat')
+    computer_macro = partial(run_computer_macro, regs, ops)
 
-    computer = Computer(regs, ops)
-    out = computer.run()
+    out = computer_macro()
     print(f"Part 1: {','.join(out)}")
 
     n = 0
     while True:
-        a_reg = 8**n
-        out = register_macro(regs, ops, a_reg)
-        if len(out) < len(ops):
-            n += 1
-        else:
+        if len(computer_macro(8**n)) == len(ops):
             break
+        n += 1
 
+    a_reg = 8**n
     while True:
-        current_out = register_macro(regs, ops, a_reg)
-        if [int(x) for x in current_out] == [int(x) for x in ops]:
+        current_out = computer_macro(a_reg)
+        if current_out == ops:
             break
 
         for ind in range(len(ops)-1, -1, -1):
-            if int(current_out[ind]) != int(ops[ind]):
+            if current_out[ind] != ops[ind]:
                 a_reg += 8**ind
                 break
 
