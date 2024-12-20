@@ -159,11 +159,9 @@ if __name__ == "__main__":
     print(f"Part 2: {checksum_2}")
 
     # Visualise it!
-    # show_arena(expanded_arena, expanded_loc)
-    # time.sleep(0.25)
-    # for step in walk:
-    #     expanded_arena, expanded_loc = do_step_v2(expanded_arena, expanded_loc, step)
-    #     show_arena(expanded_arena, expanded_loc)
-    #     time.sleep(0.25)
-
-
+    #show_arena(expanded_arena, expanded_loc)
+    #time.sleep(0.001)
+    #for step in walk:
+        #expanded_arena, expanded_loc = do_step_v2(expanded_arena, expanded_loc, step)
+        #show_arena(expanded_arena, expanded_loc)
+        #time.sleep(0.001)
